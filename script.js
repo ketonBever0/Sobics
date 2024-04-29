@@ -65,31 +65,54 @@ for (let i = 0; i < segments; i++) {
 }
 
 for (let i = 0; i < segments; i++) {
-  for (let j = 0; j < startLines; j++) {
+  for (let j = 0; j < maxLines; j++) {
+    if (j > startLines) {
+      placed[i][j] = "NONE";
+      continue;
+    }
     placed[i][j] = blocks[Math.floor(Math.random() * (blocks.length - 1)) + 1];
   }
 }
 
 const handleClick = () => {
-  console.log(`${segmentIndex + 1}. oszlop:`);
-  for (let j = 0; j < startLines; j++) {
-    console.log(placed[segmentIndex][j]);
-  }
+  // console.log(`${segmentIndex + 1}. oszlop:`);
+  // for (let j = 0; j < startLines; j++) {
+  //   console.log(placed[segmentIndex][j]);
+  // }
 
-  var reversed = placed[segmentIndex].reverse();
+  // A reversed() megfordítja az eredetit is, ha csak placed[segmentIndex].reversed() lenne, így nem.
+  var reversed = [...placed[segmentIndex]].reverse();
+  console.log(placed[segmentIndex]);
+  console.log(reversed);
 
-  const first = reversed[0];
-  // inHand.push(first);
-  for (let j = 0; j < reversed.length; j++) {
-    if (first == reversed[j]) {
-      inHand.push(reversed[j]);
-      reversed[j] = "NONE";
-    } else {
-      break;
+  if (handFill) {
+    for (let j = 0; j < placed[segmentIndex].length; j++) {
+      if (inHand.length > 0) {
+        if (placed[segmentIndex][j] == "NONE") {
+          placed[segmentIndex][j] = inHand.pop();
+        }
+      } else break;
+    }
+
+    // inHand = [];
+  } else {
+    let first = null;
+    for (let j = 0; j < reversed.length; j++) {
+      if (reversed[j] == "NONE" || reversed[j] == null) continue;
+
+      if (first == null) first = reversed[j];
+
+      if (first == reversed[j]) {
+        inHand.push(reversed[j]);
+        reversed[j] = "NONE";
+      } else {
+        break;
+      }
     }
   }
 
-  placed[segmentIndex] = reversed.reverse();
+  placed[segmentIndex] = [...reversed].reverse();
+  // console.log(reversed);
   handFill = !handFill;
   console.log(inHand);
   drawSegmentsWithSquares();
@@ -99,7 +122,7 @@ function drawSegmentsWithSquares() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "gray";
   for (let i = 0; i < segments; i++) {
-    for (let j = 0; j < startLines; j++) {
+    for (let j = 0; j < maxLines; j++) {
       let x = i * segmentWidth;
       let y = j * segmentWidth;
       let size = segmentWidth;
@@ -113,7 +136,7 @@ function drawSegmentsWithSquares() {
           ctx.fillStyle = "black";
           break;
         }
-        case "NONE" : {
+        case "NONE": {
           ctx.fillStyle = "white";
           break;
         }
@@ -127,5 +150,4 @@ function drawSegmentsWithSquares() {
   }
 }
 
-// Első rajzolás négyzetekkel
 drawSegmentsWithSquares();
