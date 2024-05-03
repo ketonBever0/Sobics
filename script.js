@@ -53,11 +53,13 @@ drawSegments();
 var score = 0;
 document.getElementById("score").innerText = score;
 
+var streak = 1;
+document.getElementById("streak").innerText = streak;
+
 let blocks = ["red", "yellow", "blue", "orange", "WALL", "DYNAMITE"];
 
-var maxHandCapacity = 3;
+// var maxHandCapacity = 3;
 let inHand = [];
-var handFill = false;
 
 const maxLines = 10;
 const startLines = 3;
@@ -175,19 +177,26 @@ const handleClick = () => {
         // console.log(sameBlockStackNum);
         reversed[j] = "NONE";
         sameBlockStackNum--;
-        score += 25;
+        score += streak * 25;
         document.getElementById("score").innerText = score;
         if (sameBlockStackNum == 0) break;
       }
+      streak++;
+      if (streak > 2) {
+        document.getElementById("streak").innerText = streak - 1;
+        document.getElementById("streak-display").style.visibility = "visible";
+      }
+    } else {
+      document.getElementById("streak-display").style.visibility = "hidden";
+      streak = 1;
     }
+
     placed[segmentIndex] = [...reversed].reverse();
     drawSegmentsWithSquares();
   }
 };
 
-const dynamiteExplosion = (at) => {
-  
-};
+const dynamiteExplosion = (at) => {};
 
 function drawSegmentsWithSquares() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);

@@ -8,8 +8,14 @@
 
 p {
     text-align: center;
+    margin: 0 0;
 }
 
-p {
+#score-display {
     font-size: 20pt;
+}
+
+#streak-display {
+    font-size: 12pt;
+    visibility: hidden;
 }
