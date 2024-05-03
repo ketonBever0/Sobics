@@ -81,11 +81,10 @@ const handleClick = () => {
   // }
 
   // A reversed() megfordítja az eredetit is, ha csak placed[segmentIndex].reversed() lenne, így nem.
-  var reversed = [...placed[segmentIndex]].reverse();
-  console.log(placed[segmentIndex]);
+  // console.log(placed[segmentIndex]);
   console.log(reversed);
 
-  if (handFill) {
+  if (inHand.length > 0) {
     for (let j = 0; j < placed[segmentIndex].length; j++) {
       if (inHand.length > 0) {
         if (placed[segmentIndex][j] == "NONE") {
@@ -96,6 +95,7 @@ const handleClick = () => {
 
     // inHand = [];
   } else {
+    var reversed = [...placed[segmentIndex]].reverse();
     let first = null;
     for (let j = 0; j < reversed.length; j++) {
       if (reversed[j] == "NONE" || reversed[j] == null) continue;
@@ -109,11 +109,11 @@ const handleClick = () => {
         break;
       }
     }
+    placed[segmentIndex] = [...reversed].reverse();
   }
 
-  placed[segmentIndex] = [...reversed].reverse();
-  // console.log(reversed);
-  handFill = !handFill;
+  console.log([...placed[segmentIndex]].reverse());
+  // handFill = !handFill;
   console.log(inHand);
   drawSegmentsWithSquares();
 };
