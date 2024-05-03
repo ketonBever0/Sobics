@@ -6,6 +6,10 @@
     margin: 0 auto;
 }
 
-#coordinates {
+p {
     text-align: center;
+}
+
+p {
+    font-size: 20pt;
 }

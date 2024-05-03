@@ -50,6 +50,9 @@ const drawSegments = () => {
 
 drawSegments();
 
+var score = 0;
+document.getElementById("score").innerText = score;
+
 let blocks = ["red", "yellow", "blue", "orange", "WALL", "DYNAMITE"];
 
 var maxHandCapacity = 3;
@@ -57,7 +60,7 @@ let inHand = [];
 var handFill = false;
 
 const maxLines = 10;
-const startLines = 5;
+const startLines = 3;
 
 let placed = [];
 for (let i = 0; i < segments; i++) {
@@ -66,7 +69,7 @@ for (let i = 0; i < segments; i++) {
 
 for (let i = 0; i < segments; i++) {
   for (let j = 0; j < maxLines; j++) {
-    if (j > startLines) {
+    if (j > startLines - 1) {
       placed[i][j] = "NONE";
       continue;
     }
@@ -82,29 +85,38 @@ const handleClick = () => {
 
   // A reversed() megfordítja az eredetit is, ha csak placed[segmentIndex].reversed() lenne, így nem.
   // console.log(placed[segmentIndex]);
-  console.log(reversed);
-
+  // console.log(reversed);
+  var placedCount = 0;
   if (inHand.length > 0) {
     for (let j = 0; j < placed[segmentIndex].length; j++) {
       if (inHand.length > 0) {
         if (placed[segmentIndex][j] == "NONE") {
           placed[segmentIndex][j] = inHand.pop();
+          placedCount++;
         }
       } else break;
     }
-
+    for (let i = 0; i < placed.length; i++) {
+      // console.log(placed[i]);
+      // new line after every block placement
+      placed[i].unshift(
+        blocks[Math.floor(Math.random() * (blocks.length - 1)) + 1]
+      );
+    }
     // inHand = [];
   } else {
     var reversed = [...placed[segmentIndex]].reverse();
     let first = null;
     for (let j = 0; j < reversed.length; j++) {
       if (reversed[j] == "NONE" || reversed[j] == null) continue;
+      if (reversed[j] == "WALL") break;
 
       if (first == null) first = reversed[j];
 
       if (first == reversed[j]) {
         inHand.push(reversed[j]);
         reversed[j] = "NONE";
+        if (first == "DYNAMITE") break;
       } else {
         break;
       }
@@ -112,10 +124,69 @@ const handleClick = () => {
     placed[segmentIndex] = [...reversed].reverse();
   }
 
-  console.log([...placed[segmentIndex]].reverse());
-  // handFill = !handFill;
-  console.log(inHand);
+  // console.log([...placed[segmentIndex]].reverse());
+  // console.log(inHand);
   drawSegmentsWithSquares();
+
+  //  if 4 or more blocks
+  if (inHand.length == 0) {
+    var reversed = [...placed[segmentIndex]].reverse();
+
+    // for (let j = 0; j < reversed.length; j++) {
+    //   if (reversed[j] == "NONE" || reversed[j] == null) continue;
+
+    //   while (placedCount > 0) {
+    //     placedCount--;
+    //     continue;
+    //   }
+
+    //   if (placedName != "" && placedName == reversed[j]) {
+
+    //   }
+
+    // }
+
+    let bottom = null;
+    var sameBlockStackNum = 0;
+    let dynamitePos = null;
+    for (let j = 0; j < reversed.length; j++) {
+      if (reversed[j] == "NONE" || reversed[j] == null) continue;
+
+      if (bottom == null) {
+        bottom = reversed[j];
+        // sameBlockStackNum++;
+
+        if (bottom == "DYNAMITE") {
+          dynamitePos = j;
+          break;
+        }
+      }
+
+      if (reversed[j] == bottom) {
+        sameBlockStackNum++;
+      } else {
+        break;
+      }
+    }
+
+    if (sameBlockStackNum >= 4) {
+      for (let j = 0; j < reversed.length; j++) {
+        if (reversed[j] == "NONE" || reversed[j] == null) continue;
+        // console.log(sameBlockStackNum);
+        reversed[j] = "NONE";
+        sameBlockStackNum--;
+        score += 25;
+        document.getElementById("score").innerText = score;
+        if (sameBlockStackNum == 0) break;
+      }
+    }
+    placed[segmentIndex] = [...reversed].reverse();
+    drawSegmentsWithSquares();
+  }
+};
+
+const dynamiteExplosion = (at) => {
+  
 };
 
 function drawSegmentsWithSquares() {
