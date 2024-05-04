@@ -9,7 +9,11 @@ const segmentWidth = canvas.width / segments;
 
 var segmentIndex = 0;
 
+var image = new Image();
+image.src = "assets/images/hero.png";
+
 const mouseMove = (e) => {
+  if (blockMouseMove) return;
   var rect = canvas.getBoundingClientRect();
   var mouseX = e.clientX - rect.left;
   var mouseY = e.clientY - rect.top;
@@ -29,15 +33,21 @@ const mouseMove = (e) => {
       canvas.height
     );
   }
-  ctx.fillStyle = "beige";
-  ctx.fillRect(
+  // ctx.fillStyle = "beige";
+  // ctx.fillRect(
+  //   segmentIndex * segmentWidth,
+  //   canvas.height - canvas.height / 5,
+  //   segmentWidth,
+  //   canvas.height
+  // );
+
+  ctx.drawImage(
+    image,
     segmentIndex * segmentWidth,
     canvas.height - canvas.height / 5,
     segmentWidth,
-    canvas.height
+    canvas.height / 5
   );
-
-  // ctx.fillRect(segmentIndex * segmentWidth, 0, segmentWidth, canvas.height);
 };
 
 const drawSegments = () => {
@@ -68,18 +78,24 @@ let placed = [];
 for (let i = 0; i < segments; i++) {
   placed[i] = [];
 }
-
-for (let i = 0; i < segments; i++) {
-  for (let j = 0; j < maxLines; j++) {
-    if (j > startLines - 1) {
-      placed[i][j] = "NONE";
-      continue;
+var blockMouseMove = true;
+const startGame = () => {
+  blockMouseMove = false;
+  image.src = "assets/images/hero.png";
+  for (let i = 0; i < segments; i++) {
+    for (let j = 0; j < maxLines; j++) {
+      if (j > startLines - 1) {
+        placed[i][j] = "NONE";
+        continue;
+      }
+      placed[i][j] =
+        blocks[Math.floor(Math.random() * (blocks.length - 1)) + 1];
     }
-    placed[i][j] = blocks[Math.floor(Math.random() * (blocks.length - 1)) + 1];
   }
-}
-
+};
+startGame();
 const handleClick = () => {
+  if (blockMouseMove) return;
   // console.log(`${segmentIndex + 1}. oszlop:`);
   // for (let j = 0; j < startLines; j++) {
   //   console.log(placed[segmentIndex][j]);
@@ -130,7 +146,18 @@ const handleClick = () => {
   // console.log(inHand);
   drawSegmentsWithSquares();
 
-  //  if 4 or more blocks
+  for (let i = 0; i < placed.length; i++) {
+    var notEmpties = 0;
+    for (let j = 0; j < placed[i].length; j++) {
+      if (placed[i][j] != "NONE") notEmpties++;
+    }
+    if (notEmpties >= maxLines) {
+      gameOver();
+      blockMouseMove = true;
+    }
+  }
+
+  // Ha 4 vagy több blokk van egymáson lerakás után
   if (inHand.length == 0) {
     var reversed = [...placed[segmentIndex]].reverse();
 
@@ -231,3 +258,15 @@ function drawSegmentsWithSquares() {
 }
 
 drawSegmentsWithSquares();
+
+const gameOver = () => {
+  image.src = "assets/images/hero_died.png";
+  ctx.drawImage(
+    image,
+    segmentIndex * segmentWidth,
+    canvas.height - canvas.height / 5,
+    segmentWidth,
+    canvas.height / 5
+  );
+};
+
