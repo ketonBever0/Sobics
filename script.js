@@ -186,8 +186,8 @@ const handleClick = () => {
         // sameBlockStackNum++;
 
         if (bottom == "DYNAMITE") {
-          dynamitePos = j;
-          break;
+          // dynamiteExplosion(segmentIndex, j, reversed);
+          return;
         }
       }
 
@@ -199,6 +199,7 @@ const handleClick = () => {
     }
 
     if (sameBlockStackNum >= 4) {
+
       for (let j = 0; j < reversed.length; j++) {
         if (reversed[j] == "NONE" || reversed[j] == null) continue;
         // console.log(sameBlockStackNum);
@@ -223,7 +224,17 @@ const handleClick = () => {
   }
 };
 
-const dynamiteExplosion = (at) => {};
+// const dynamiteExplosion = (segmentIndex, at, reversed) => {
+
+//   var current = [...placed];
+//   current[segmentIndex] = [...reversed].reverse();
+//   pos = maxLines - at;
+
+
+
+
+
+// };
 
 function drawSegmentsWithSquares() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
